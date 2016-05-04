@@ -20,9 +20,10 @@ io.on('connection', function (socket) {
 });
 
 console.log(
-  '\nServer is running\n' +
+  '\n' +
+  'Server is running\n' +
   'In this machine: http://localhost:' + port + '\n' +
   'In local network: http://' + ip.address() + ':' + port + '\n' +
-  'To stop server, press Ctrl+C'
+  'To stop server, press Ctrl+C\n'
 
 )
