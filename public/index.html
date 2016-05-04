@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <div style="padding: 3em; background: yellow; display: inline-flex; display: absolute" class="draggable">
+        Yo
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        var socket = io.connect();
+
+        var draggable = $('.draggable').draggabilly();
+        var draggie = draggable.data('draggabilly');
+
+        draggable.on('dragMove', function() {
+
+            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+
+        });
+
+        socket.on('move', function (data) {
+
+            draggable.css({'left': data.x, 'top': data.y})
+
+        });
+
+    </script>
+
+</body>
+</html>
+
