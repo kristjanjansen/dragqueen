@@ -5,19 +5,34 @@
     <style>
         
         .draggable {
-            width: 100px;
-            height: 100px;
+            z-index: 999;
+            width: 150px;
+            height: 150px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: yellow;
+            /*/background-color: #ff00cc;/*/
+            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Anhg5NFxg0vL_Ib7UI2VPJOF9FnzKU3lwA8pznsOamX5gWGJGg");
+            background-repeat: no repeat;
+            background-size: cover;
+            box-shadow: inset 0 0 0 2px #191919,0 0 10px #000000,0 0 15px #00ccff;
         }
+        body{
+            width: 100%;
+            height: 100%;
+            background-image: url("http://slither.io/s/bg45.jpg");
+            bbackground-size: cover;
+        }
+        
+
 
     </style>
 </head>
 <body>
 
-    <div class="draggable">Yo</div>
+    <!--img src="http://slither.io/s/bg45.jpg" background-size: repeat; width: 1240; height: 940;-->
+
+    <div class="draggable"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
