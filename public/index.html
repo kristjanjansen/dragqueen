@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+
+    <title>hello world</title>
     <style>
         
         .draggable {
@@ -10,36 +11,73 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: yellow;
+            background-image:url("http://www.freedomlovin.com/wp-content/uploads/2016/03/donald-trump-fake.jpg");
         }
 
+
+        body {
+            background-image:url("http://hdwplan.com/wp-content/uploads/2016/02/best-full-hd.jpg");
+        }
+        .container {
+            border: 5px solid blue;
+            width: 900px;
+            height: 430px;
+            display: inline-flex;
+        }
     </style>
-</head>
+</head> 
 <body>
 
-    <div class="draggable">Yo</div>
+    
+    <div class="container">
+            <div class="draggable" id=d0>P0</div>
+            <div class="draggable" id=d1>P1</div>
+            <div class="draggable" id=d2>P2</div>
+            <div class="draggable" id=d3>P3</div>
+            <div class="draggable" id=d4>P4</div>
+            <div class="draggable" id=d5>P5</div>
+            <div class="draggable" id=d6>P6</div>
+            <div class="draggable" id=d7>P7</div>
+            <div class="draggable" id=d8>P8</div>
+            <div class="draggable" id=d9>P9</div>
+    </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         
+        $('.draggable').each(function(index) {
+            position = index * 100
+            console.log(index, position)
+
+            $('#d' + index).css({
+              'background-position': 'left -' + (index * 90) + 'px top 0px'
+            })
+        })
+
         var socket = io.connect();
-
-        var draggable = $('.draggable').draggabilly();
-        var draggie = draggable.data('draggabilly');
-
-        draggable.on('dragMove', function() {
-
-            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
-
-        });
-
+        var draggables = $('.draggable');
+        var $draggables = $('.draggable').draggabilly({
+                        containment: true
+                        });
+        var draggies = []
+        draggables.each(function() {
+            draggable = $(this).draggabilly().on('dragMove', function() {
+                var draggie = $(this).data('draggabilly');
+                console.log($(this).attr('id'), draggie.position.x, draggie.position.y );
+                id = $(this).attr('id')
+                socket.emit('move', {
+                    id: id, x: draggie.position.x, y: draggie.position.y
+                        
+                });
+            })
+        })
         socket.on('move', function (data) {
-
-            draggable.css({'left': data.x, 'top': data.y})
-
+            $('#' + data.id).css({'left': data.x, 'top': data.y})
         });
+
 
     </script>
 
