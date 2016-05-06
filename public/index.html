@@ -12,11 +12,21 @@
             justify-content: center;
             background-color: blue;
         }
+
+        .draggable2 {
+            width: 200px;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: blue;
+        }
     </style>
 </head>
 <body>
 
-    <div class="draggable">Yo</div>
+    <div class="draggable">draggable1</div>
+    <div class="draggable2">draggable2</div>
     <div class="message-box"></div>
     <input type="text" name="message">
     <button class="submit-btn">Submit</button>
@@ -27,15 +37,22 @@
 
         var socket = io.connect();
 
+
         var draggable = $('.draggable').draggabilly();
         var draggie = draggable.data('draggabilly');
+
+        var draggable2 = $('.draggable2').draggabilly();
+        var draggie2 = draggable2.data('draggabilly');
+
         var $button = $(".submit-btn");
         var $input = $("input[name=message]");
 
         draggable.on('dragMove', function() {
-
             socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+        });
 
+        draggable2.on('dragMove2', function() {
+            socket.emit('move2', {x: draggie2.position.x, y: draggie2.position.y});
         });
 
         $button.on("click", function () {
@@ -44,16 +61,18 @@
                 socket.emit("messageIn", message);
                 $input.val("");
             }
-        })
-
-
+        });
 
         socket.on('move', function (data) {
             draggable.css({'left': data.x, 'top': data.y})
         });
 
+        socket.on('move2', function (data) {
+            draggable2.css({'left': data.x, 'top': data.y})
+        });
+
         socket.on("messageOut", function (msg) {
-            $(".message-box").append(msg + "<br>");
+            $("<div/>").text(msg).appendTo(".message-box");
         });
 
     </script>
