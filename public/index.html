@@ -3,7 +3,7 @@
 <head>
     <title></title>
     <style>
-        
+
         .draggable {
             width: 200px;
             height: 50px;
@@ -18,16 +18,19 @@
 <body>
 
     <div class="draggable">Yo</div>
-
+    <div class="message-box"></div>
+    <input type="text" name="message">
+    <button class="submit-btn">Submit</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        
+
         var socket = io.connect();
 
         var draggable = $('.draggable').draggabilly();
         var draggie = draggable.data('draggabilly');
+        var $button = $(".submit-btn");
 
         draggable.on('dragMove', function() {
 
@@ -35,10 +38,21 @@
 
         });
 
+        $button.on("click", function () {
+            var message = $("input[name=message]").val();
+            if (message) {
+                socket.emit("messageIn", message);
+            }
+        })
+
+
+
         socket.on('move', function (data) {
-
             draggable.css({'left': data.x, 'top': data.y})
+        });
 
+        socket.on("messageOut", function (msg) {
+            $(".message-box").append(msg + "<br>");
         });
 
     </script>

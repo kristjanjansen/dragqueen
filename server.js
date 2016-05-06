@@ -12,9 +12,12 @@ server.listen(port);
 io.on('connection', function (socket) {
 
   socket.on('move', function (data) {
-      
       socket.broadcast.emit('move', data);
+  });
 
+  socket.on("messageIn", function (msg) {
+  	socket.emit("messageOut", msg);
+  	socket.broadcast.emit("messageOut", msg);
   });
 
 });
