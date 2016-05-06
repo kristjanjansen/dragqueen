@@ -2,6 +2,7 @@
 <html>
 <head>
     <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
     <style>
         body{
             background-image:url("background.png");
@@ -25,18 +26,23 @@
     </style>
 </head>
 <body>
-    <h1>Catch the kush</h1>
+    <h1 class="player1">Player 1 currently blazing it.</h1>
+    <h1 class="player2">Player 2 currently blazing it.</h1>
     <div class="draggable"></div>
     <div class="draggable2"></div>
 
-    <div class="yo">YOOOO</div>
+    <div class="yo">You win, sucker.   </div>
+    <div id="dis" class="disgrace"><img src="http://treasure.diylol.com/uploads/post/image/158318/resized_high-expectations-asian-father-meme-generator-graduated-from-princeton-you-re-a-disgrace-to-the-family-c26e92.jpg"/></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+
     <script>
-        
+        $('.player1').hide()
+        $('.player2').hide()
         $('.yo').hide()
+        $('.disgrace').hide()
 
         var socket = io.connect();
 
@@ -45,7 +51,31 @@
 
         draggable.on('dragMove', function() {
 
-            console.log(draggie.position)
+            x = draggie.position.x
+            y = draggie.position.y
+           // console.log(x, y)
+           console.log("Player 1 moving the thing");
+           $('.player2').hide()
+           $('.player1').show()
+        
+            if(x >= 168 && x <= 466 && y >= 433 && y <=582) {
+          
+                $('.yo').show()
+       
+            }else{
+                $('.yo').hide()
+            }
+
+
+            if(x >= 1212 && x <= 1442 && y >= 550 && y <=620) {
+          
+                $('.disgrace').show()
+                $('#dis').addClass('animated shake');
+       
+            }else{
+                $('.disgrace').hide()
+            }
+            
             socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
             
         });
@@ -53,12 +83,14 @@
         socket.on('move', function (data) {
 
             draggable.css({'left': data.x, 'top': data.y})
-
+            console.log("Player 2 moving the thing");
+            $('.player2').show()
+            $('.player1').hide()
         });
-
-     //   if(x>=168&&x<=466&&y>=433&&y<=582){
-      //          $('.yo').show()
-       //     }
+            function pause(){
+                
+            }
+        
     </script>
 
 </body>
