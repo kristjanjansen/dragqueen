@@ -4,7 +4,7 @@
     <title></title>
     <style>
         body{
-            background-image:url("http://flusharcade.com/wp-content/uploads/maxresdefault3.jpg");
+            background-image:url("background.png");
         }
         h1{
             text-align:center;
@@ -17,7 +17,7 @@
             align-items: center;
             justify-content: center;
             /*/background-color: blue;/*/
-            background-image: url("https://pixabay.com/static/uploads/photo/2014/04/02/14/08/cannabis-306291_960_720.png");
+            background-image: url("http://img04.deviantart.net/fc2a/i/2015/124/b/5/joint_by_anthracksthepony-d8s7qlc.png");
             background-size:cover;
             background-repeat:no-repeat;
         }
@@ -27,12 +27,17 @@
 <body>
     <h1>Catch the kush</h1>
     <div class="draggable"></div>
+    <div class="draggable2"></div>
+
+    <div class="yo">YOOOO</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         
+        $('.yo').hide()
+
         var socket = io.connect();
 
         var draggable = $('.draggable').draggabilly();
@@ -40,8 +45,9 @@
 
         draggable.on('dragMove', function() {
 
+            console.log(draggie.position)
             socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
-
+            
         });
 
         socket.on('move', function (data) {
@@ -50,6 +56,9 @@
 
         });
 
+     //   if(x>=168&&x<=466&&y>=433&&y<=582){
+      //          $('.yo').show()
+       //     }
     </script>
 
 </body>
