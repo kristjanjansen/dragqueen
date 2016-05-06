@@ -4,33 +4,41 @@
     <title></title>
     <style>
 
-        .draggable {
-            width: 200px;
-            height: 50px;
+        #d1 {
+            width: 150px;
+            height: 150px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background-color: blue;
         }
 
-        .draggable2 {
-            width: 200px;
-            height: 50px;
+        #d2 {
+            width: 300px;
+            height: 300px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background-color: blue;
+        }
+        .container {
+            width:1500px;
+            height:900px;
+            border: 1px solid #000;
         }
     </style>
 </head>
 <body>
 
-    <div class="draggable" id="d1">draggable1</div>
-    <div class="draggable" id="d2">draggable2</div>
-
-    <div class="message-box"></div>
-    <input type="text" name="message">
-    <button class="submit-btn">Submit</button>
+    <div class="container">
+        <div class="draggable" id="d1">draggable1</div>
+        <div class="draggable" id="d2">draggable2</div>
+    </div>
+    <div style="float:right;">
+        <div class="message-box"></div>
+        <input type="text" name="message">
+        <button class="submit-btn">Submit</button>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -39,12 +47,13 @@
         var socket = io.connect();
 
         var draggables = $('.draggable');
-        var draggies = []
+        var $button = $(".submit-btn");
+        var $input = $("input[name=message]");
 
         draggables.each(function() {
-            draggable = $(this).draggabilly().on('dragMove', function() {
+            draggable = $(this).draggabilly({ containment: true }).on('dragMove', function() {
                 var draggie = $(this).data('draggabilly');
-                console.log($(this).attr('id'), draggie.position.x, draggie.position.y );
+                // console.log($(this).attr('id'), draggie.position.x, draggie.position.y );
                 id = $(this).attr('id')
                 socket.emit('move', {
                     id: id, x: draggie.position.x, y: draggie.position.y
@@ -54,8 +63,23 @@
         })
 
         socket.on('move', function (data) {
+            $('#' + data.id).css({'left': data.x, 'top': data.y});
+        });
 
-            $('#' + data.id).css({'left': data.x, 'top': data.y})
+
+
+
+
+        $button.on("click", function () {
+            var message = $input.val();
+            if (message) {
+                socket.emit("messageIn", message);
+                $input.val("");
+            }
+        });
+
+        socket.on("messageOut", function (msg) {
+            $("<div/>").text(msg).appendTo(".message-box");
         });
 /*
         draggables.each(function() {
