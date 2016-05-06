@@ -32,12 +32,23 @@
             right: 30px;
         }        
 
+        .counter2 {
+            font-size: 50px;
+            font-family: sans-serif;
+            color: white;
+            position: absolute;
+            top: 33px;
+            right: 1723px;
+        }
+
 
     </style>
 </head>
 <body>
 
     <div class="counter1">0</div>
+
+    <div class="counter2">0</div>
 
     <div class="draggable"></div>
 
@@ -47,6 +58,7 @@
     <script>
         
         var counter1 = 0;
+        var counter2 = 0;
 
         var socket = io.connect();
 
@@ -60,10 +72,16 @@
             
             console.log(x, y)
 
-            if (x > 200) {
+            if (x > 815) {
 
-                counter1 = counter1 + 1;             
+                counter1 = counter1 + +1;             
                 $('.counter1').text(counter1)
+            
+            }
+            if (x < 815) {
+
+                counter2 = counter2 + 1;             
+                $('.counter2').text(counter2)
             
             }
 
