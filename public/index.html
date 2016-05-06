@@ -12,7 +12,6 @@
             justify-content: center;
             background-color: blue;
         }
-
     </style>
 </head>
 <body>
@@ -31,6 +30,7 @@
         var draggable = $('.draggable').draggabilly();
         var draggie = draggable.data('draggabilly');
         var $button = $(".submit-btn");
+        var $input = $("input[name=message]");
 
         draggable.on('dragMove', function() {
 
@@ -39,9 +39,10 @@
         });
 
         $button.on("click", function () {
-            var message = $("input[name=message]").val();
+            var message = $input.val();
             if (message) {
                 socket.emit("messageIn", message);
+                $input.val("");
             }
         })
 
