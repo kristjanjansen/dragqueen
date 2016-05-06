@@ -23,14 +23,21 @@
             background-image: url("http://slither.io/s/bg45.jpg");
             bbackground-size: cover;
         }
-        
+        .counter1 {
+            font-size: 50px;
+            font-family: sans-serif;
+            color: white;
+            position: absolute;
+            top: 30px;
+            right: 30px;
+        }        
 
 
     </style>
 </head>
 <body>
 
-    <!--img src="http://slither.io/s/bg45.jpg" background-size: repeat; width: 1240; height: 940;-->
+    <div class="counter1">0</div>
 
     <div class="draggable"></div>
 
@@ -39,12 +46,26 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         
+        var counter1 = 0;
+
         var socket = io.connect();
 
         var draggable = $('.draggable').draggabilly();
         var draggie = draggable.data('draggabilly');
 
         draggable.on('dragMove', function() {
+
+            x = draggie.position.x
+            y = draggie.position.y
+            
+            console.log(x, y)
+
+            if (x > 200) {
+
+                counter1 = counter1 + 1;             
+                $('.counter1').text(counter1)
+            
+            }
 
             socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
 
