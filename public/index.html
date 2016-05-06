@@ -25,8 +25,9 @@
 </head>
 <body>
 
-    <div class="draggable">draggable1</div>
-    <div class="draggable2">draggable2</div>
+    <div class="draggable" id="d1">draggable1</div>
+    <div class="draggable" id="d2">draggable2</div>
+
     <div class="message-box"></div>
     <input type="text" name="message">
     <button class="submit-btn">Submit</button>
@@ -37,43 +38,53 @@
 
         var socket = io.connect();
 
+        var draggables = $('.draggable');
+        var draggies = []
 
-        var draggable = $('.draggable').draggabilly();
-        var draggie = draggable.data('draggabilly');
+        draggables.each(function() {
+            draggable = $(this).draggabilly().on('dragMove', function() {
+                var draggie = $(this).data('draggabilly');
+                console.log($(this).attr('id'), draggie.position.x, draggie.position.y );
+                id = $(this).attr('id')
+                socket.emit('move', {
+                    id: id, x: draggie.position.x, y: draggie.position.y
+                });
 
-        var draggable2 = $('.draggable2').draggabilly();
-        var draggie2 = draggable2.data('draggabilly');
+            })
+        })
 
-        var $button = $(".submit-btn");
-        var $input = $("input[name=message]");
+        socket.on('move', function (data) {
+
+            $('#' + data.id).css({'left': data.x, 'top': data.y})
+        });
+/*
+        draggables.each(function() {
+            draggable = $(this).draggabilly()
+            draggie = draggable.data('draggabilly');
+            draggies.push(draggie)
+        })
+
+        console.log(draggies)
 
         draggable.on('dragMove', function() {
-            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+            console.log('d1', draggies[0].position)
+            console.log('d2', draggies[1].position)
+        });
+*/
+
+
+
+       /*
+        var draggie = draggable.data('draggabilly');
+
+        draggable.on('dragMove', function() {
+            console.log(draggie.position)
         });
 
         draggable2.on('dragMove2', function() {
-            socket.emit('move2', {x: draggie2.position.x, y: draggie2.position.y});
+            console.log(draggie2.position)
         });
-
-        $button.on("click", function () {
-            var message = $input.val();
-            if (message) {
-                socket.emit("messageIn", message);
-                $input.val("");
-            }
-        });
-
-        socket.on('move', function (data) {
-            draggable.css({'left': data.x, 'top': data.y})
-        });
-
-        socket.on('move2', function (data) {
-            draggable2.css({'left': data.x, 'top': data.y})
-        });
-
-        socket.on("messageOut", function (msg) {
-            $("<div/>").text(msg).appendTo(".message-box");
-        });
+*/
 
     </script>
 
