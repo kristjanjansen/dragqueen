@@ -91,11 +91,34 @@
             box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
         }
 
-        .submit {
+        .message-box {
 
-            background-color: red;
+            padding: 10px;
+
         }
 
+        .postinput {
+
+            padding: 8px;
+
+        }
+       
+       input[type="submit"] {
+            color: #00ff00;
+            background-color: #080808;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
+            text-decoration: none;
+       }
+
+       input[type="text"] {
+            
+            color: #00ff00;;
+            background-color: #080808;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
+
+       }
 
         ul {
             list-style: none;
@@ -108,14 +131,19 @@
         }
     </style>
 </head>
+
+
+
 <body>
     <div class="points-container"></div>
     <div class="game-container"></div>
     <div class="chat">
+        <div class="postinput">
         <form method="post">
             <input type="text" name="message" autocomplete="off">
             <input type="submit" value="Send">
         </form>
+        </div>
         <div class="message-box">
             <ul></ul>
         </div>
