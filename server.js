@@ -166,7 +166,7 @@ function resetStuff() {
   setFood();
 }
 
-function showThings(socket) {
+function showThings() {
   io.emit("showPlayers", clients);
   for (var id in clients) {
     io.to(id).emit("addDrag", clients[id].username);
@@ -196,7 +196,7 @@ function startTimer(duration, socket) {
               if (Object.keys(clients).length > 0) {
                 io.emit("removeWinner");
                 showThings(socket);
-                startTimer(roundTime, socket);
+                startTimer(roundTime);
               }
             }, roundBreak);
         }
@@ -209,8 +209,7 @@ io.on('connection', function (socket) {
   // console.log(io.engine.clientsCount)
   // console.log(socket.id);
   // console.log(socket.request.connection.remoteAddress);
-  // ips.indexOf(socket.request.connection.remoteAddress) > -1
-  if (-10 > -1) {
+  if (ips.indexOf(socket.request.connection.remoteAddress) > -1) {
     io.to(socket.id).emit("error", "You are already in game.");
     showGameTo(socket.id);
   } else if (Object.keys(clients).length < MAX_PLAYERS) {
