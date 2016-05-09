@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html>
 <head>
     <title></title>
@@ -10,6 +10,10 @@
         h1{
             text-align:center;
             font-family:arial;
+        }
+        h2{
+            font-family:arial;
+            margin:0;
         }
         .draggable {
             width: 70px;
@@ -26,13 +30,14 @@
     </style>
 </head>
 <body>
-    <h1 class="player1">Player 1 currently blazing it.</h1>
-    <h1 class="player2">Player 2 currently blazing it.</h1>
+    <h1 class="player1" style="text-align:left;">Player 1 currently blazing it.</h1>
+    <h1 class="player2" style="text-align:right;">Player 2 currently blazing it.</h1>
+    <h2 class="counter1" style="float:left;">0</h2>
     <div class="draggable"></div>
     <div class="draggable2"></div>
 
-    <div class="yo">You win, sucker.   </div>
-    <div id="dis" class="disgrace"><img src="http://treasure.diylol.com/uploads/post/image/158318/resized_high-expectations-asian-father-meme-generator-graduated-from-princeton-you-re-a-disgrace-to-the-family-c26e92.jpg"/></div>
+    <!--<div class="yo">You win, sucker.</div>-->
+    <!--<div id="dis" class="disgrace"><img src="http://treasure.diylol.com/uploads/post/image/158318/resized_high-expectations-asian-father-meme-generator-graduated-from-princeton-you-re-a-disgrace-to-the-family-c26e92.jpg"/></div>--><!--
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
@@ -40,22 +45,64 @@
 
     <script>
         $('.player1').hide()
+
         $('.player2').hide()
+
         $('.yo').hide()
+
         $('.disgrace').hide()
+
 
         var socket = io.connect();
 
+        //var counter1 = 0;
+        //var counter2 = 0;
+
+        var counter1 = parseInt($('.counter1').text());
+
         var draggable = $('.draggable').draggabilly();
+
         var draggie = draggable.data('draggabilly');
 
         draggable.on('dragMove', function() {
 
             x = draggie.position.x
+
             y = draggie.position.y
-           // console.log(x, y)
+           console.log(x, y)
+
            console.log("Player 1 moving the thing");
+          
+           if(x >= 651 && x<=978 && y<=694 && y>=360) {
+
+                counter1+=1;
+
+                $(".counter1").text(counter1);
+
+                //console.log("Balloon");
+           }
+           if(x <= 651 && x>=978 && y>=694 && y<=360) {
+
+                counter1-=1;
+
+                $(".counter1").text(counter1);
+
+                //console.log("Balloon");
+           }
+          
+/*
+            if(x >= 651 && x<=978 && y<=694 && y>=360) {
+
+                counter2+=1;
+
+                $(".counter2").text(counter2);
+
+                //console.log("Balloon");
+            }
+
+*/
            $('.player2').hide()
+
            $('.player1').show()
         
             if(x >= 168 && x <= 466 && y >= 433 && y <=582) {
@@ -63,36 +110,216 @@
                 $('.yo').show()
        
             }else{
+
                 $('.yo').hide()
+
             }
 
 
             if(x >= 1212 && x <= 1442 && y >= 550 && y <=620) {
           
                 $('.disgrace').show()
+
                 $('#dis').addClass('animated shake');
        
             }else{
+
                 $('.disgrace').hide()
+
             }
             
-            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
-            
+            //socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+            socket.emit('move', {x: x, y:y, counter1: counter1, counter2: counter2});
+
         });
 
         socket.on('move', function (data) {
 
             draggable.css({'left': data.x, 'top': data.y})
-            console.log("Player 2 moving the thing");
+
+           // console.log("Player 2 moving the thing");
+
             $('.player2').show()
+
             $('.player1').hide()
+
+            $('.counter1').text(data.counter1)
+
+            $('.counter2').text(data.counter2)
+
         });
-            function pause(){
-                
-            }
+            
         
     </script>
 
 </body>
+</html>-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+        
+        .draggable {
+            z-index: 999;
+            width: 150px;
+            height: 150px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /*/background-color: #ff00cc;/*/
+            background-image: url("http://www.foodcolor.com/resource/resized_376x319_black-carrot.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;2
+            box-shadow: inset 0 0 0 2px #191919,0 0 10px #000000,0 0 15px #00ccff;
+            z-index: 1000;
+        }
+        body{
+            width: 100%;
+            height: 100%;
+            background-image: url("https://i.ytimg.com/vi/Ri9dVX-8zSg/maxresdefault.jpg");
+            background-size: cover;
+            font-family: sans-serif;
+        }
+        .counter1 {
+            font-size: 200px;
+            color:#crimson;
+            position: absolute;
+            top: 30px;
+            right: 40px;
+        }        
+
+        .counter2 {
+            font-size: 200px;
+            font-family: sans-serif;
+            color: navy;
+            position: absolute;
+            top: 33px;
+            right: 7200px;
+        }
+
+        .win {
+            width: 100vw;
+            height: 100vh;
+            font-size:500px; 
+            color:#000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+          
+            position: absolute;
+
+        }
+
+        .rules {
+            width: 100vw;
+            height: 100vh;
+            font-size:100px; 
+            color:white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+ 
+            position: absolute;
+            background-image: url("https://i.ytimg.com/vi/ND07m8wBltQ/maxresdefault.jpg");
+            background-repeat: no repeat;
+            background-size: cover;
+
+            background-color: gray;
+            text-align: center;
+            z-index: 100000;
+
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="win"></div>
+    <div class="counter1">0</div>
+
+    <div class="counter2">0</div>
+
+    <div class="draggable"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        $(".win").hide()
+
+        $(".rules").on('click', function() {
+            $(this).hide()
+        })
+
+        var counter1 = 0;
+        var counter2 = 0;
+
+        var socket = io.connect();
+
+        var draggable = $('.draggable').draggabilly();
+        var draggie = draggable.data('draggabilly');
+
+        draggable.css({'left': $(window).width() / 2, 'top': 1750})
+
+        draggable.on('dragMove', function() {
+
+            x = draggie.position.x
+            y = draggie.position.y
+            
+
+            var counter1 = parseInt($('.counter1').text());
+            var counter2 = parseInt($('.counter2').text());
+
+            if (counter1 >= 100) {
+
+
+                $(".win").text("Right side won")
+                $(".win").show()
+
+            }
+
+            if (counter2 >=100) {
+
+                $(".win").text("left side won")
+                $(".win").show()
+
+            }
+
+            if (x > 3600) {
+
+                counter1 = counter1 + +1;             
+                $('.counter1').text(counter1)
+            
+            }
+            if (x < 3600) {
+
+                counter2 = counter2 + 1;             
+                $('.counter2').text(counter2)
+            
+            }
+
+            socket.emit('move', {x: x, y:y, counter1: counter1, counter2: counter2});
+
+        });
+
+        socket.on('move', function (data) {
+            
+            draggable.css({'left': data.x, 'top': data.y})
+
+            $('.counter1').text(data.counter1)
+            $('.counter2').text(data.counter2)
+        
+
+
+        });
+
+    </script>
+
+</body>
 </html>
+
+
 
