@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <meta charset="UTF-8">
+    <title>Bestest Game</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
 
-        #d1 {
-            width: 150px;
-            height: 150px;
+
+        .game-container {
+            width: 80%;
+            height: 95vh;
+            border: 1px solid #000;
+            padding: 0;
+            margin: 0;
+            float: left;
+        }
+
+        .draggable {
+            word-wrap: break-word;
+            width: 50px;
+            height: 50px;
+            position: absolute;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: blue;
+            /* Break long words and urls */
+
+            /* These are technically the same, but use both */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            -ms-word-break: break-all;
+
+            /* This is the dangerous one in WebKit, as it breaks things wherever */
+            word-break: break-all;
+            /* Instead use this non-standard one: */
+            word-break: break-word;
+
+            /* Adds a hyphen where the word breaks, if supported (No Blink) */
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
         }
 
-        #d2 {
-            width: 150px;
-            height: 150px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: blue;
-        }
-
-        .food-box {
+        .food {
             width: 100px;
             height: 100px;
             display: inline-flex;
@@ -32,24 +56,50 @@
             position: absolute;
         }
 
-        .container {
-            width:1500px;
-            height:900px;
-            border: 1px solid #000;
+        .points-container {
+            text-align: center;
+            margin-right: 19%;
+        }
+
+        .points-container .points {
+            margin-left: 10px;
+        }
+
+        .points-container .points span {
+            color: #333;
+        }
+
+        .chat {
+            width: 19%;
+            height: 95vh;
+            float: right;
+            display: block;
+            overflow-y: scroll;
+        }
+
+
+        ul {
+            list-style: none;
+            word-wrap: break-word;
+            padding: 0;
+        }
+
+        li:nth-child(even) {
+            background: #ccc;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="draggable" id="d1">draggable1</div>
-        <div class="draggable" id="d2">draggable2</div>
-        <!-- <div class="food-box"></div> -->
-    </div>
-    <div style="float:right;">
-        <div class="message-box"></div>
-        <input type="text" name="message">
-        <button class="submit-btn">Submit</button>
+    <div class="points-container"></div>
+    <div class="game-container"></div>
+    <div class="chat">
+        <form method="post">
+            <input type="text" name="message" autocomplete="off">
+            <input type="submit" value="Send">
+        </form>
+        <div class="message-box">
+            <ul></ul>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
@@ -58,79 +108,191 @@
 
         var socket = io.connect();
 
-        var draggables = $('.draggable');
-        var $button = $(".submit-btn");
         var $input = $("input[name=message]");
+        var $container = $(".game-container");
+        var $pContainer = $(".points-container");
+        var $form = $("form");
 
-        draggables.each(function() {
-            draggable = $(this).draggabilly({ containment: true }).on('dragMove', function() {
+        var PW = 50;
+        var PH = 50;
+        var FW = 100;
+        var FH = 100;
+
+        var CW = $container.width();
+        var CH = $container.height();
+        var CX = $container.offset().left;
+        var CY = $container.offset().top;
+
+        // console.log("CW: " + CW, "CH: " + CH, "CX: " + CX, "CY: " + CY);
+
+        var resetPosition;
+
+        function doesCollide(rect1, rect2) {
+            var x1 = rect1.x;
+            var y1 = rect1.y;
+            var h1 = rect1.height;
+            var w1 = rect1.width;
+            var b1 = y1 + h1;
+            var r1 = x1 + w1;
+            var x2 = rect2.x;
+            var y2 = rect2.y;
+            var h2 = rect2.height;
+            var w2 = rect2.width;
+            var b2 = y2 + h2;
+            var r2 = x2 + w2;
+
+            if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) return false;
+
+            return true;
+        }
+
+        function doStuff($el) {
+            return {
+                "x": $el.offset().left,
+                "y": $el.offset().top,
+                "width": $el.outerWidth(true),
+                "height": $el.outerHeight(true)
+            }
+        }
+
+        // function grow($el) {
+        //     $el.width("+=1");
+        //     $el.height("+=1");
+        // }
+
+        function addPoints(name) {
+            socket.emit("updatePoints", name);
+        }
+
+        function foodCollision($el) {
+            if (doesCollide(doStuff($(".food")), doStuff($el))) {
+                var id = $el.attr("id");
+                removeFood();
+                addPoints(id);
+                createFood();
+            }
+        }
+
+        function createFood() {
+            socket.emit("removeFood");
+            socket.emit("createFood");
+        }
+
+        function removeFood() {
+            if ($(".food").length) {
+                $(".food").remove();
+            }
+        }
+
+        function addDrag(id) {
+            $("#" + id).draggabilly({ containment: true }).on('dragMove', function() {
                 var draggie = $(this).data('draggabilly');
-                // console.log($(this).attr('id'), draggie.position.x, draggie.position.y );
-                id = $(this).attr('id')
-                socket.emit('move', {
-                    id: id, x: draggie.position.x, y: draggie.position.y
-                });
+                var id = $(this).attr("id");
+                if ($(".food").length) foodCollision($(this));
+                socket.emit('move', { id: id, x: draggie.position.x, y: draggie.position.y });
+            });
+        }
 
-            })
+        function buildElements(data) {
+            var $el = $('<div class="draggable" id="' + data.username + '"></div>');
+            var $pointsEl = $('<span class="points">' + data.username + '<span>: </span><span class="' + data.username + '-points">' + data.points + '</span></span>');
+            $pointsEl.css("color", data.color);
+            $el.css({
+                "background-color": data.color,
+                "left": data.x,
+                "top": data.y
+            });
+            $el.text(data.username);
+            $container.append($el);
+            $pContainer.append($pointsEl);
+            socket.emit("show", { "id": data.username, "x": data.x, "y": data.y });
+        }
+
+        function sendMsg(e) {
+            e.preventDefault();
+            var message = $input.val();
+            if (message) {
+                socket.emit("messageIn", message);
+                $input.val("");
+            }
+        }
+
+        $form.on("submit", sendMsg);
+
+        socket.on("addDrag", function (id) {
+            addDrag(id);
+        });
+
+        socket.on("clientConnected", function () {
+            var name = prompt("Pick a name. Alphanumeric characters. Maximum length 8.");
+            while (name === null) {
+                name = prompt("Name is required you dummy.");
+            }
+            while (!/^[a-z0-9]+$/i.test(name) || !name.length || name.length > 8) {
+                name = prompt("Signup failed. Try again. Alphanumeric characters. Maximum length 8.");
+            }
+            socket.emit("createUser", name);
+        });
+
+        socket.on("addUser", function (data) {
+            buildElements(data);
+        });
+
+        socket.on("showPlayers", function (data) {
+            for (var user in data) {
+                buildElements(data[user]);
+            }
+        });
+
+        socket.on("deleteUser", function (user) {
+            $("#" + user).remove();
+            $("." + user + "-points").parent().remove();
+        });
+
+        socket.on("error", function (err) {
+            alert(err);
         });
 
         socket.on('move', function (data) {
             $('#' + data.id).css({'left': data.x, 'top': data.y});
         });
 
-        function createFood() {
-            // var x = Math.round(Math.random() * (1500-100) / 100);
-            // var y = Math.round(Math.random() * (900-100) / 100);
-            var x = Math.random() * (0, 1400) + 0;
-            var y = Math.random() * (0, 800) + 0;
-            $('<div class="food-box"/>').css({ 'left': x, 'top': y }).appendTo(".container");
-        }
+        socket.on("removeFood", function () {
+            removeFood();
+        });
 
-        createFood();
+        socket.on("createFood", function (data) {
+            // $container.append('<div class="food"></div>');
+            // $(".food").css({ 'left': data.x, 'top': data.y});
+            $('<div class="food"></div>')
+                .css({ 'left': data.x, 'top': data.y })
+                .appendTo($container);
+        });
 
-
-        $button.on("click", function () {
-            var message = $input.val();
-            if (message) {
-                socket.emit("messageIn", message);
-                $input.val("");
-            }
+        socket.on("updatePoints", function (data) {
+            $("." + data.name + "-points").text(data.points);
         });
 
         socket.on("messageOut", function (msg) {
-            $("<div/>").text(msg).appendTo(".message-box");
-        });
-/*
-        draggables.each(function() {
-            draggable = $(this).draggabilly()
-            draggie = draggable.data('draggabilly');
-            draggies.push(draggie)
-        })
-
-        console.log(draggies)
-
-        draggable.on('dragMove', function() {
-            console.log('d1', draggies[0].position)
-            console.log('d2', draggies[1].position)
-        });
-*/
-
-
-
-       /*
-        var draggie = draggable.data('draggabilly');
-
-        draggable.on('dragMove', function() {
-            console.log(draggie.position)
+            $("<li></li>").text(msg).prependTo(".message-box ul");
         });
 
-        draggable2.on('dragMove2', function() {
-            console.log(draggie2.position)
+        function positioning() {
+            $(".food").css("position", "absolute");
+            $(".draggable").css("position", "absolute");
+        }
+
+        $(window).on("resize", function () {
+            clearTimeout(resetPosition);
+            $(".food").css("position", "static");
+            $(".draggable").css("position", "static");
+            CW = $container.width();
+            CH = $container.height();
+            CX = $container.offset().left;
+            CY = $container.offset().top;
+            resetPosition = setTimeout(positioning, 1);
         });
-*/
 
     </script>
-
 </body>
 </html>
-
