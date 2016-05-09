@@ -57,6 +57,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         
+
         var counter1 = 0;
         var counter2 = 0;
 
@@ -70,7 +71,9 @@
             x = draggie.position.x
             y = draggie.position.y
             
-            console.log(x, y)
+
+            var counter1 = parseInt($('.counter1').text());
+            var counter2 = parseInt($('.counter2').text());
 
             if (x > 815) {
 
@@ -85,13 +88,18 @@
             
             }
 
-            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+            socket.emit('move', {x: x, y:y, counter1: counter1, counter2: counter2});
 
         });
 
         socket.on('move', function (data) {
-
+            
             draggable.css({'left': data.x, 'top': data.y})
+
+            $('.counter1').text(data.counter1)
+            $('.counter2').text(data.counter2)
+        
+
 
         });
 
