@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Bestest Game</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Share+Tech+Mono' rel='stylesheet' type='text/css'>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Share Tech Mono';
+            color:#00ff00;
+            text-shadow: 0 0 25px #00ff00;
+            background-color: #080808;
+
         }
 
 
         .game-container {
             width: 80%;
             height: 95vh;
-            border: 1px solid #000;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
             padding: 0;
             margin: 0;
             float: left;
         }
 
+
         .draggable {
             word-wrap: break-word;
             width: 50px;
             height: 50px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;;
             position: absolute;
             display: inline-flex;
             align-items: center;
@@ -47,18 +55,22 @@
         }
 
         .food {
-            width: 100px;
-            height: 100px;
+            width: 85px;
+            height: 85px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: red;
+            background-color: transparent;
             position: absolute;
+            border: 5px solid #00ff00;
+            border-radius: 50px;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
         }
 
         .points-container {
             text-align: center;
             margin-right: 19%;
+
         }
 
         .points-container .points {
@@ -66,7 +78,7 @@
         }
 
         .points-container .points span {
-            color: #333;
+            color:#00ff00;
         }
 
         .chat {
@@ -75,8 +87,38 @@
             float: right;
             display: block;
             overflow-y: scroll;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
         }
 
+        .message-box {
+
+            padding: 10px;
+
+        }
+
+        .postinput {
+
+            padding: 8px;
+
+        }
+       
+       input[type="submit"] {
+            color: #00ff00;
+            background-color: #080808;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
+            text-decoration: none;
+       }
+
+       input[type="text"] {
+            
+            color: #00ff00;;
+            background-color: #080808;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
+
+       }
 
         ul {
             list-style: none;
@@ -85,18 +127,23 @@
         }
 
         li:nth-child(even) {
-            background: #ccc;
+            background: #262626;
         }
     </style>
 </head>
+
+
+
 <body>
     <div class="points-container"></div>
     <div class="game-container"></div>
     <div class="chat">
+        <div class="postinput">
         <form method="post">
             <input type="text" name="message" autocomplete="off">
             <input type="submit" value="Send">
         </form>
+        </div>
         <div class="message-box">
             <ul></ul>
         </div>
