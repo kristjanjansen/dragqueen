@@ -4,20 +4,37 @@
     <title></title>
     <style>
         
+        body {
+            background-color: #000;
+            background-image:url("img/spaceship.jpg");
+            background-repeat:no-repeat;
+        }
+
+
         .draggable {
-            width: 100px;
-            height: 100px;
+            width: 162px;
+            height: 410px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: yellow;
+            background-image:url("img/pre.jpg");
         }
+
+        .draggable1 {
+            width: 162px;
+            height: 410px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-image:url("img/hal.jpg");
+        }
+
 
     </style>
 </head>
 <body>
 
-    <div class="draggable">Yo</div>
+    <div class="draggable"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
@@ -38,6 +55,32 @@
         socket.on('move', function (data) {
 
             draggable.css({'left': data.x, 'top': data.y})
+
+        });
+
+    </script>
+
+    <div class="draggable1"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/draggabilly/2.1.0/draggabilly.pkgd.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        var socket = io.connect();
+
+        var draggable1 = $('.draggable1').draggabilly();
+        var draggie = draggable1.data('draggabilly');
+
+        draggable1.on('dragMove', function() {
+
+            socket.emit('move', {x: draggie.position.x, y: draggie.position.y});
+
+        });
+
+        socket.on('move', function (data) {
+
+            draggable1.css({'left': data.x, 'top': data.y})
 
         });
 
