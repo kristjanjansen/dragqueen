@@ -196,30 +196,30 @@ io.on('connection', function (socket) {
   });
 
   socket.on("removeFood", function () {
-    if (collision(socket.id)) {
+    //if (collision(socket.id)) {
       validate = true;
       io.emit("removeFood");
-    }
+   // }
   });
 
   socket.on("createFood", function () {
     // console.log(data);
-    if (validate || noFood) {
+   // if (validate || noFood) {
       validate = false;
       setFood();
       setTimeout(function () {
         io.emit("createFood", food);
       }, 250);
       if (noFood) noFood = false;
-    }
+   // }
   });
 
   socket.on("updatePoints", function (name) {
-    if (collision(socket.id)) {
+    //if (collision(socket.id)) {
       var p = clients[socket.id].points + 1;
       clients[socket.id].points = p;
       io.emit("updatePoints", { name: name, points: p });
-    }
+    //}
   });
 });
 
