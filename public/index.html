@@ -7,16 +7,15 @@
     <style>
         body {
             font-family: 'Share Tech Mono';
-            color:#00ff00;
+            color: #00ff00;
             text-shadow: 0 0 25px #00ff00;
             background-color: #080808;
 
         }
 
-
         .game-container {
             width: 80%;
-            height: 95vh;
+            height: 94vh;
             border: 3px solid #00ff00;
             box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
             padding: 0;
@@ -24,9 +23,7 @@
             float: left;
         }
 
-
         .draggable {
-            word-wrap: break-word;
             width: 50px;
             height: 50px;
             border: 3px solid #00ff00;
@@ -54,6 +51,12 @@
             hyphens: auto;
         }
 
+        .winner {
+            text-align: center;
+            vertical-align: middle;
+            line-height: 90vh;
+        }
+
         .food {
             width: 85px;
             height: 85px;
@@ -67,10 +70,11 @@
             box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
         }
 
-        .points-container {
+        .points-container,
+        .timer-container {
             text-align: center;
             margin-right: 19%;
-
+            min-height: 18px;
         }
 
         .points-container .points {
@@ -78,12 +82,12 @@
         }
 
         .points-container .points span {
-            color:#00ff00;
+            color: #00ff00;
         }
 
         .chat {
             width: 19%;
-            height: 95vh;
+            height: 94vh;
             float: right;
             display: block;
             overflow-y: scroll;
@@ -92,33 +96,27 @@
         }
 
         .message-box {
-
             padding: 10px;
-
         }
 
         .postinput {
-
             padding: 8px;
-
         }
-       
-       input[type="submit"] {
+
+        input[type="submit"] {
             color: #00ff00;
             background-color: #080808;
             border: 3px solid #00ff00;
             box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
             text-decoration: none;
-       }
+        }
 
-       input[type="text"] {
-            
-            color: #00ff00;;
+        input[type="text"] {
+            color: #00ff00;
             background-color: #080808;
             border: 3px solid #00ff00;
             box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
-
-       }
+        }
 
         ul {
             list-style: none;
@@ -133,16 +131,19 @@
 </head>
 
 
-
 <body>
-    <div class="points-container"></div>
+    <div class="timer-container">
+        <span class="timer">00:00</span>
+    </div>
+    <div class="points-container">
+    </div>
     <div class="game-container"></div>
     <div class="chat">
         <div class="postinput">
-        <form method="post">
-            <input type="text" name="message" autocomplete="off">
-            <input type="submit" value="Send">
-        </form>
+            <form method="post">
+                <input type="text" name="message" autocomplete="off">
+                <input type="submit" value="Send">
+            </form>
         </div>
         <div class="message-box">
             <ul></ul>
@@ -159,6 +160,7 @@
         var $container = $(".game-container");
         var $pContainer = $(".points-container");
         var $form = $("form");
+        var $timer = $(".timer");
 
         var PW = 50;
         var PH = 50;
@@ -270,6 +272,31 @@
             addDrag(id);
         });
 
+        socket.on("showWinner", function (txt) {
+            $('<h2 class="winner"></h2>').text(txt).appendTo($container);
+        });
+
+        socket.on("removeWinner", function () {
+            $(".winner").remove();
+        });
+
+        socket.on("countdown", function (time) {
+            $timer.text(time);
+        });
+
+        socket.on("clearStuff", function (chat) {
+            $container.html("");
+            $(".points").remove();
+            $timer.text("");
+            $(".message-box ul").html("");
+        });
+
+        socket.on("roundReset", function () {
+            $container.html("");
+            $(".points").remove();
+            $timer.text("");
+        });
+
         socket.on("clientConnected", function () {
             var name = prompt("Pick a name. Alphanumeric characters. Maximum length 8.");
             while (name === null) {
@@ -308,7 +335,7 @@
             removeFood();
         });
 
-        socket.on("createFood", function (data) {
+        socket.on("showFood", function (data) {
             // $container.append('<div class="food"></div>');
             // $(".food").css({ 'left': data.x, 'top': data.y});
             $('<div class="food"></div>')
